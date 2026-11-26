@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KOPIKO BLACK — Interactive Christmas Letter</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Lora:ital,wght@0,400..600;1,400..600&family=Playfair+Display:ital,wght@0,500;0,700;1,500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body data-theme="parchment" data-seal="crimson">
+
+  <!-- Gentle Falling Snow Canvas -->
+  <canvas id="snowCanvas" aria-hidden="true"></canvas>
+
+  <!-- Floating Top Controls -->
+  <header class="top-bar">
+    <div class="brand-badge">
+      <span>✦</span> KOPIKO BLACK
+    </div>
+    <div class="controls-group">
+      <button id="musicBtn" class="pill-btn" aria-label="Toggle Holiday Music Box">
+        <span id="musicIcon">🔇</span>
+        <span id="musicText">Music Box</span>
+      </button>
+      <button id="openDrawerBtn" class="pill-btn primary-pill">
+        ✎ Customize & Share
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Stage -->
+  <main class="stage">
+    <!-- STAGE 1: Wax-Sealed Envelope -->
+    <section id="envelopeWrapper" class="envelope-wrapper" aria-label="Christmas Envelope">
+      <div class="envelope" id="envelopeCard">
+        <div class="envelope-back"></div>
+
+        <!-- Vintage Postmark -->
+        <div class="postmark" aria-hidden="true">
+          <div class="postmark-stamp">25¢<br/>ALAS</div>
+          <div class="postmark-rings">
+            <span>NORTH POLE</span>
+            <small>DEC 25 • 2026</small>
+          </div>
+        </div>
+
+        <!-- Recipient Address on Envelope -->
+        <div class="envelope-address">
+          <p class="deliver-label">Special Holiday Delivery For</p>
+          <h1 id="envRecipient" class="recipient-script">Dearest Friend</h1>
+        </div>
+
+        <!-- Envelope Flaps -->
+        <div class="flap-left"></div>
+        <div class="flap-right"></div>
+        <div class="flap-bottom"></div>
+        <div class="flap-top" id="flapTop"></div>
+
+        <!-- Embossed Interactive Wax Seal -->
+        <button id="waxSealBtn" class="wax-seal" aria-label="Break wax seal to open Christmas letter">
+          <span class="seal-inner">❄</span>
+        </button>
+      </div>
+      <p class="hint-text" id="hintText">Click the wax seal to break &amp; open your letter</p>
+    </section>
+
+    <!-- STAGE 2: Unfolded Stationery Letter -->
+    <article id="letterPaper" class="letter-paper hidden" aria-live="polite">
+      <div class="letter-border">
+        <div class="letter-header">
+          <span class="letter-date" id="letterDate">December 25, 2026</span>
+          <button id="closeLetterBtn" class="text-action-btn" title="Fold back into envelope">
+            ↺ Fold Envelope
+          </button>
+        </div>
+
+        <h2 class="salutation" id="letterSalutation">Dearest Friend,</h2>
+
+        <div class="letter-body" id="letterBody">
+          <p>As snow settles softly outside and the warmth of winter lights fills the evening, I wanted to send a heartfelt note across the miles to wish you the most magical Christmas.</p>
+          <p>May your home be filled with laughter, cozy moments by the fire, and the quiet joy that makes this season unforgettable. Thank you for bringing light, kindness, and wonderful memories into this year.</p>
+          <p>Here is to peaceful days ahead and a New Year brimming with hope and wonder.</p>
+        </div>
+
+        <!-- Dropped Festive Stamps Area -->
+        <div id="appliedStamps" class="applied-stamps" aria-label="Applied holiday stickers"></div>
+
+        <div class="letter-footer">
+          <p class="sign-off" id="letterSignOff">With warmest holiday wishes,</p>
+          <p class="signature" id="letterSender">Your Secret Santa</p>
+        </div>
+
+        <!-- Interactive Festive Stamp Dock -->
+        <div class="stamp-dock-wrapper">
+          <span class="dock-label">Add a festive stamp:</span>
+          <div class="stamp-dock" role="toolbar" aria-label="Festive stamps">
+            <button class="stamp-btn" data-stamp="🎄" title="Christmas Tree">🎄</button>
+            <button class="stamp-btn" data-stamp="❄️" title="Snowflake">❄️</button>
+            <button class="stamp-btn" data-stamp="🕯️" title="Warm Candle">🕯️</button>
+            <button class="stamp-btn" data-stamp="🦌" title="Reindeer">🦌</button>
+            <button class="stamp-btn" data-stamp="🎁" title="Gift">🎁</button>
+            <button class="stamp-btn" data-stamp="✨" title="Starlight">✨</button>
+            <button id="clearStampsBtn" class="clear-stamps-btn" title="Clear stamps">Clear</button>
+          </div>
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <!-- Customization Drawer -->
+  <aside id="customDrawer" class="drawer" aria-hidden="true">
+    <div class="drawer-header">
+      <h3>Personalize Letter</h3>
+      <button id="closeDrawerBtn" class="icon-close" aria-label="Close customization panel">✕</button>
+    </div>
+
+    <div class="drawer-content">
+      <div class="form-group">
+        <label for="inputRecipient">Recipient Name</label>
+        <input type="text" id="inputRecipient" value="Dearest Friend" maxlength="40" />
+      </div>
+
+      <div class="form-group">
+        <label for="inputSender">Your Name (Signature)</label>
+        <input type="text" id="inputSender" value="Your Secret Santa" maxlength="40" />
+      </div>
+
+      <div class="form-group">
+        <label for="presetSelect">Holiday Message Preset</label>
+        <select id="presetSelect">
+          <option value="classic">Classic Warmth &amp; Joy</option>
+          <option value="family">Family &amp; Gratitude</option>
+          <option value="romantic">Cozy Romantic Winter</option>
+          <option value="custom">Custom Message</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="inputMessage">Letter Message</label>
+        <textarea id="inputMessage" rows="6"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Stationery Theme</label>
+        <div class="swatch-row" id="themeSelector">
+          <button class="swatch-btn active" data-theme-val="parchment">Parchment</button>
+          <button class="swatch-btn" data-theme-val="midnight">Midnight</button>
+          <button class="swatch-btn" data-theme-val="nordic">Nordic</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Wax Seal Color</label>
+        <div class="color-dots" id="sealSelector">
+          <button class="dot-btn active" data-seal-val="crimson" style="background:#9e1b24;" aria-label="Crimson Wax"></button>
+          <button class="dot-btn" data-seal-val="emerald" style="background:#184e3b;" aria-label="Emerald Wax"></button>
+          <button class="dot-btn" data-seal-val="gold" style="background:#b8860b;" aria-label="Antique Gold Wax"></button>
+        </div>
+      </div>
+
+      <div class="drawer-actions">
+        <button id="copyLinkBtn" class="action-btn secondary">🔗 Copy Shareable Link</button>
+        <button id="printBtn" class="action-btn primary">🖨️ Print Holiday Card</button>
+      </div>
+      <p id="toastMsg" class="toast-msg" role="status"></p>
+    </div>
+  </aside>
+  <div id="drawerBackdrop" class="drawer-backdrop"></div>
+
+  <script>
+    // --- Presets & DOM Elements ---
+    const presets = {
+      classic: `As snow settles softly outside and the warmth of winter lights fills the evening, I wanted to send a heartfelt note across the miles to wish you the most magical Christmas.\n\nMay your home be filled with laughter, cozy moments by the fire, and the quiet joy that makes this season unforgettable. Thank you for bringing light, kindness, and wonderful memories into this year.\n\nHere is to peaceful days ahead and a New Year brimming with hope and wonder.`,
+      family: `No matter how busy life gets, Christmas always reminds me of what matters most—family, shared stories, and unconditional love.\n\nThank you for being my anchor and my greatest blessing throughout this year. Wishing you abundant health, peace, and warmth this holiday season and always.`,
+      romantic: `Every winter light shines a little brighter with you in my life. Under the mistletoe and the quiet December stars, my favorite gift this Christmas is simply having you by my side.\n\nMay our days stay warm, our hearts stay close, and every new year bring us even more reasons to smile together.`
+    };
+
+    const waxSealBtn = document.getElementById('waxSealBtn');
+    const flapTop = document.getElementById('flapTop');
+    const envelopeWrapper = document.getElementById('envelopeWrapper');
+    const letterPaper = document.getElementById('letterPaper');
+    const closeLetterBtn = document.getElementById('closeLetterBtn');
+
+    const inputRecipient = document.getElementById('inputRecipient');
+    const inputSender = document.getElementById('inputSender');
+    const inputMessage = document.getElementById('inputMessage');
+    const presetSelect = document.getElementById('presetSelect');
+
+    const envRecipient = document.getElementById('envRecipient');
+    const letterSalutation = document.getElementById('letterSalutation');
+    const letterBody = document.getElementById('letterBody');
+    const letterSender = document.getElementById('letterSender');
+
+    // Initialize default text
+    inputMessage.value = presets.classic;
+
+    // --- Envelope Open / Close Sequence ---
+    waxSealBtn.addEventListener('click', () => {
+      waxSealBtn.classList.add('broken');
+      playChime(523.25, 0.35); // Gentle C5 chime
+      setTimeout(() => {
+        flapTop.classList.add('open');
+      }, 220);
+      setTimeout(() => {
+        envelopeWrapper.classList.add('fade-out');
+      }, 850);
+      setTimeout(() => {
+        envelopeWrapper.classList.add('hidden');
+        letterPaper.classList.remove('hidden');
+        requestAnimationFrame(() => letterPaper.classList.add('visible'));
+      }, 1250);
+    });
+
+    closeLetterBtn.addEventListener('click', () => {
+      letterPaper.classList.remove('visible');
+      setTimeout(() => {
+        letterPaper.classList.add('hidden');
+        envelopeWrapper.classList.remove('hidden', 'fade-out');
+        flapTop.classList.remove('open');
+        waxSealBtn.classList.remove('broken');
+      }, 450);
+    });
+
+    // --- Live Content Updates ---
+    function syncLetterContent() {
+      const rec = inputRecipient.value.trim() || 'Dearest Friend';
+      const snd = inputSender.value.trim() || 'Your Secret Santa';
+      envRecipient.textContent = rec;
+      letterSalutation.textContent = `${rec},`;
+      letterSender.textContent = snd;
+
+      const paragraphs = inputMessage.value
+        .split(/\n+/)
+        .map(p => p.trim())
+        .filter(Boolean);
+      letterBody.innerHTML = paragraphs.map(p => `<p>${escapeHTML(p)}</p>`).join('');
+    }
+
+    function escapeHTML(str) {
+      return str.replace(/[&<>"']/g, m => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      }[m]));
+    }
+
+    inputRecipient.addEventListener('input', syncLetterContent);
+    inputSender.addEventListener('input', syncLetterContent);
+    inputMessage.addEventListener('input', () => {
+      presetSelect.value = 'custom';
+      syncLetterContent();
+    });
+
+    presetSelect.addEventListener('change', (e) => {
+      if (presets[e.target.value]) {
+        inputMessage.value = presets[e.target.value];
+        syncLetterContent();
+      }
+    });
+
+    // --- Interactive Stamps ---
+    const appliedStamps = document.getElementById('appliedStamps');
+    document.querySelectorAll('.stamp-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (appliedStamps.children.length >= 12) return;
+        const badge = document.createElement('span');
+        badge.className = 'placed-stamp';
+        badge.textContent = btn.dataset.stamp;
+        const rot = (Math.random() * 24 - 12).toFixed(1);
+        badge.style.transform = `rotate(${rot}deg)`;
+        badge.title = 'Click to remove stamp';
+        badge.addEventListener('click', () => badge.remove());
+        appliedStamps.appendChild(badge);
+        playChime(659.25, 0.2);
+      });
+    });
+
+    document.getElementById('clearStampsBtn').addEventListener('click', () => {
+      appliedStamps.innerHTML = '';
+    });
+
+    // --- Drawer Controls ---
+    const drawer = document.getElementById('customDrawer');
+    const backdrop = document.getElementById('drawerBackdrop');
+    const toggleDrawer = (open) => {
+      drawer.classList.toggle('open', open);
+      backdrop.classList.toggle('open', open);
+      drawer.setAttribute('aria-hidden', String(!open));
+    };
+
+    document.getElementById('openDrawerBtn').addEventListener('click', () => toggleDrawer(true));
+    document.getElementById('closeDrawerBtn').addEventListener('click', () => toggleDrawer(false));
+    backdrop.addEventListener('click', () => toggleDrawer(false));
+
+    // --- Theme & Wax Seal Switchers ---
+    document.querySelectorAll('#themeSelector .swatch-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#themeSelector .swatch-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.body.dataset.theme = btn.dataset.themeVal;
+      });
+    });
+
+    document.querySelectorAll('#sealSelector .dot-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#sealSelector .dot-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.body.dataset.seal = btn.dataset.sealVal;
+      });
+    });
+
+    // --- Shareable URL & Print ---
+    const toastMsg = document.getElementById('toastMsg');
+    document.getElementById('copyLinkBtn').addEventListener('click', async () => {
+      const params = new URLSearchParams({
+        to: inputRecipient.value,
+        from: inputSender.value,
+        msg: inputMessage.value,
+        theme: document.body.dataset.theme,
+        seal: document.body.dataset.seal
+      });
+      const shareUrl = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        toastMsg.textContent = '✓ Shareable Christmas link copied to clipboard!';
+      } catch {
+        toastMsg.textContent = 'Link ready in address bar!';
+        window.history.replaceState({}, '', `?${params.toString()}`);
+      }
+      setTimeout(() => (toastMsg.textContent = ''), 3500);
+    });
+
+    document.getElementById('printBtn').addEventListener('click', () => {
+      toggleDrawer(false);
+      if (letterPaper.classList.contains('hidden')) {
+        envelopeWrapper.classList.add('hidden');
+        letterPaper.classList.remove('hidden');
+        letterPaper.classList.add('visible');
+      }
+      setTimeout(() => window.print(), 250);
+    });
+
+    // Hydrate from URL parameters if shared
+    (function loadFromURL() {
+      const params = new URLSearchParams(window.location.search);
+      if (params.has('to')) inputRecipient.value = params.get('to');
+      if (params.has('from')) inputSender.value = params.get('from');
+      if (params.has('msg')) {
+        inputMessage.value = params.get('msg');
+        presetSelect.value = 'custom';
+      }
+      if (params.has('theme')) {
+        document.body.dataset.theme = params.get('theme');
+        document.querySelectorAll('#themeSelector .swatch-btn').forEach(b => {
+          b.classList.toggle('active', b.dataset.themeVal === params.get('theme'));
+        });
+      }
+      if (params.has('seal')) {
+        document.body.dataset.seal = params.get('seal');
+        document.querySelectorAll('#sealSelector .dot-btn').forEach(b => {
+          b.classList.toggle('active', b.dataset.sealVal === params.get('seal'));
+        });
+      }
+      syncLetterContent();
+    })();
+
+    // --- Web Audio API Holiday Music Box ---
+    let audioCtx = null;
+    let musicPlaying = false;
+    let melodyTimer = null;
+
+    // "We Wish You a Merry Christmas" music box notes (Hz, duration in ms)
+    const melody = [
+      [392.00, 380], [523.25, 380], [523.25, 190], [587.33, 190], [523.25, 190], [493.88, 190],
+      [440.00, 380], [440.00, 380], [440.00, 380],
+      [587.33, 380], [587.33, 190], [659.25, 190], [587.33, 190], [523.25, 190],
+      [493.88, 380], [392.00, 380], [392.00, 380],
+      [659.25, 380], [659.25, 190], [698.46, 190], [659.25, 190], [587.33, 190],
+      [523.25, 380], [440.00, 380], [392.00, 190], [392.00, 190],
+      [440.00, 380], [587.33, 380], [493.88, 380], [523.25, 760]
+    ];
+
+    function playChime(freq, durationSec = 0.4) {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+      gain.gain.setValueAtTime(0.001, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.08, audioCtx.currentTime + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + durationSec);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + durationSec);
+    }
+
+    function startMusicLoop(index = 0) {
+      if (!musicPlaying) return;
+      const [freq, dur] = melody[index % melody.length];
+      playChime(freq, dur / 700);
+      melodyTimer = setTimeout(() => startMusicLoop(index + 1), dur + 40);
+    }
+
+    const musicBtn = document.getElementById('musicBtn');
+    const musicIcon = document.getElementById('musicIcon');
+    musicBtn.addEventListener('click', () => {
+      musicPlaying = !musicPlaying;
+      musicIcon.textContent = musicPlaying ? '🎵' : '🔇';
+      musicBtn.classList.toggle('active-audio', musicPlaying);
+      if (musicPlaying) {
+        startMusicLoop(0);
+      } else {
+        clearTimeout(melodyTimer);
+      }
+    });
+
+    // --- Gentle Snowfall Canvas ---
+    const canvas = document.getElementById('snowCanvas');
+    const ctx = canvas.getContext('2d');
+    let flakes = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    for (let i = 0; i < 65; i++) {
+      flakes.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() * 2.6 + 1,
+        speedY: Math.random() * 0.8 + 0.3,
+        drift: Math.random() * 0.6 - 0.3
+      });
+    }
+
+    function animateSnow() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.72)';
+      ctx.beginPath();
+      for (const f of flakes) {
+        ctx.moveTo(f.x, f.y);
+        ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+        f.y += f.speedY;
+        f.x += f.drift;
+        if (f.y > canvas.height) {
+          f.y = -5;
+          f.x = Math.random() * canvas.width;
+        }
+      }
+      ctx.fill();
+      requestAnimationFrame(animateSnow);
+    }
+    animateSnow();
+  </script>
+</body>
+</html>
